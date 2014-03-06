@@ -7,7 +7,7 @@
 // Writes the result in reverse order !
 template<class InputItA, class InputItB, class OutputIt, class Size>
 OutputIt resolve_finite_diff(const Size n, InputItA c, InputItB f, OutputIt out) {
-    typedef double e;
+    typedef typename std::iterator_traits<InputItA>::value_type e;
 
     const e h = 1/((e)n+1);
     const e h2 = h*h;
