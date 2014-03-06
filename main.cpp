@@ -1,16 +1,16 @@
 #include<iostream>
 
 #include "finitediff.h"
+#include "tests.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    int n = 4;
-    double c[] = {3, 5, 1, 8};
-    double f[] = {1, 9, 6, 2};
-    auto out = ostream_iterator<double>(cout, " ");
-    resolve_finite_diff(n, c, f, out);
+    cout << "With float :" << endl;
+    test_finitediff_error<float>();
+    cout << endl << "With double :" << endl;
+    test_finitediff_error<double>();
     
     return 0;
 }
