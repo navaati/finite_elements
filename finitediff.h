@@ -5,8 +5,8 @@
 #include<iterator>
 
 // Writes the result in reverse order !
-template<class InputItA, class InputItB, class OutputIt, class Size>
-OutputIt resolve_finite_diff(const Size n, InputItA c, InputItB f, OutputIt out) {
+template<class InputItA, class InputItB, class OutputIt>
+OutputIt resolve_finite_diff(const int n, InputItA c, InputItB f, OutputIt out) {
     typedef typename std::iterator_traits<InputItA>::value_type e;
 
     const e h = 1/((e)n+1);
