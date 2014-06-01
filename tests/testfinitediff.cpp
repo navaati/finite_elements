@@ -5,6 +5,7 @@
 #include <QtTest/QtTest>
 
 #include "const_iterator.h"
+#include "thomas_algo.h"
 #include "finitediff.h"
 
 using namespace std;
@@ -62,7 +63,47 @@ template unsigned finitediffPrecisionLossRank<double>();
 class TestFiniteDiff: public QObject
 {
     Q_OBJECT
+private:
+    void eqn_error(double& max_error, double a, double b, double c, double x_im1, double x_i, double x_ip1, double r) {
+        double new_error = abs(a*x_im1 + b*x_i + c*x_ip1 - r);
+        max_error = max(max_error, new_error);
+    }
+
 private slots:
+    void maxThomasAlgoError() {
+        constexpr int n = 4;
+        const double lower[n-1] = {4, 8, 12};
+        const double diag[n] = {1, 5, 9, 13};
+        const double upper[n-1] = {2, 6, 10};
+        const double right[n] = {300, 700, 1100, 1400};
+
+        vector<double> x(n);
+        thomas_algo(n, lower, diag, upper, right, x.begin());
+
+        double max_error = 0;
+        const double* lower_it = lower;
+        const double* diag_it = diag;
+        const double* upper_it = upper;
+        const double* right_it = right;
+        auto x_it = x.rbegin(); // was written in reverse !
+
+        eqn_error(max_error, 0, *diag_it, *upper_it, 0, *x_it, *(x_it+1), *right_it);
+        ++diag_it; ++upper_it; ++right_it;
+        ++x_it;
+
+        while(x_it != x.rend()-1) {
+            eqn_error(max_error, *lower_it, *diag_it, *upper_it, *(x_it-1), *x_it, *(x_it+1), *right_it);
+            ++lower_it, ++diag_it; ++upper_it; ++right_it;
+            ++x_it;
+        }
+
+        eqn_error(max_error, *lower_it, *diag_it, 0, *(x_it-1), *x_it, 0, *right_it);
+
+        cout << "Thomas algo max error : " << max_error << endl;
+
+        QVERIFY(max_error < 5e-13);
+    }
+
     void maxRankFloat() {
         QVERIFY(finitediffPrecisionLossRank<float>() > 7);
     }
