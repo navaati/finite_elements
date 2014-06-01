@@ -1,31 +1,45 @@
 #ifndef FINITEDIFF_H
 #define FINITEDIFF_H
 
-#include<vector>
 #include<iterator>
+#include<type_traits>
 
-// Writes the result in reverse order !
+#include "thomas_algo.h"
+#include "const_iterator.h"
+
+template<class It> class FiniteDiffIterator {
+private:
+    typedef typename std::iterator_traits<It>::value_type E;
+    It m_it;
+    const E m_h2;
+public:
+    typedef std::input_iterator_tag iterator_category;
+    typedef E value_type;
+    typedef void difference_type;
+    typedef void pointer;
+    typedef void reference;
+
+    FiniteDiffIterator(It it, E h2) : m_it(it), m_h2(h2) {}
+
+    E operator*() {
+        return 2/m_h2 + *m_it;
+    }
+
+    FiniteDiffIterator<It>& operator++() {
+        ++m_it;
+        return *this;
+    }
+};
+
 template<class InputItA, class InputItB, class OutputIt>
 OutputIt resolve_finite_diff(const int n, InputItA c, InputItB f, OutputIt out) {
-    typedef typename std::iterator_traits<InputItA>::value_type e;
+    typedef typename std::iterator_traits<InputItA>::value_type E;
 
-    const e h = 1/((e)n+1);
-    const e h2 = h*h;
+    const E h = 1/((E)n+1);
+    const E h2 = h*h;
+    const ConstIterator<E> lower_upper(-1/h2);
 
-    std::vector<std::pair<e,e>> scratch(n+1);
-
-    for(auto it = scratch.begin(); it != scratch.end()-1; ) {
-        e common = 1/(2+h2*(*c++)+it->first);
-        *++it = std::make_pair(-1*common,(h2*(*f++)+it->second)*common);
-    }
-
-    e x_i = 0;
-    for (auto it = scratch.rbegin(); it != scratch.rend()-1; it++) {
-        x_i = it->second - it->first*x_i;
-        *out++ = x_i;
-    }
-
-    return out;
+    return thomas_algo(n, lower_upper, FiniteDiffIterator<InputItA>(c, h2), lower_upper, f, out);
 }
 
 #endif // FINITEDIFF_H
