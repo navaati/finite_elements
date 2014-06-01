@@ -8,30 +8,6 @@
 
 using namespace std;
 
-class TestFiniteDiff: public QObject
-{
-    Q_OBJECT
-private slots:
-    void maxRankFloat();
-    void maxRankDouble();
-};
-QTEST_MAIN(TestFiniteDiff)
-#include "testfinitediff.moc"
-
-template<typename e> e finitediff_error(const int n);
-
-template<typename e> unsigned finitediffPrecisionLossRank();
-
-void showSimpleFiniteDiff();
-
-void TestFiniteDiff::maxRankFloat() {
-    QVERIFY(finitediffPrecisionLossRank<float>() > 7);
-}
-
-void TestFiniteDiff::maxRankDouble() {
-    QVERIFY(finitediffPrecisionLossRank<double>() > 13);
-}
-
 template<typename d> d finitediff_error(const int n) {
     const d h = 1/((d)n+1);
 
@@ -81,6 +57,20 @@ template<typename d> unsigned finitediffPrecisionLossRank() {
 }
 template unsigned finitediffPrecisionLossRank<float>();
 template unsigned finitediffPrecisionLossRank<double>();
+
+class TestFiniteDiff: public QObject
+{
+    Q_OBJECT
+private slots:
+    void maxRankFloat() {
+        QVERIFY(finitediffPrecisionLossRank<float>() > 7);
+    }
+    void maxRankDouble() {
+        QVERIFY(finitediffPrecisionLossRank<double>() > 13);
+    }
+};
+QTEST_MAIN(TestFiniteDiff)
+#include "testfinitediff.moc"
 
 void showSimpleFiniteDiff() {
     int n = 4;
