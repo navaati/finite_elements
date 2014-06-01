@@ -4,6 +4,7 @@
 #include<cmath>
 #include <QtTest/QtTest>
 
+#include "const_iterator.h"
 #include "finitediff.h"
 
 using namespace std;
@@ -11,7 +12,7 @@ using namespace std;
 template<typename d> d finitediff_error(const int n) {
     const d h = 1/((d)n+1);
 
-    vector<d> c(n, 1);
+    const ConstIterator<d> c(1);
 
     vector<d> f(n);
     int i = 1;
@@ -19,7 +20,7 @@ template<typename d> d finitediff_error(const int n) {
 
     vector<d> out(n);
 
-    resolve_finite_diff(n, c.begin(), f.begin(), out.rbegin());
+    resolve_finite_diff(n, c, f.begin(), out.rbegin());
 
     i = 1;
     d error = 0;
