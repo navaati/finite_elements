@@ -98,7 +98,7 @@ private slots:
     }
 
     void maxRankFloat() {
-        QVERIFY(finitediffPrecisionLossRank<float>() > 7);
+        QVERIFY(finitediffPrecisionLossRank<float>() > 6);
     }
     void maxRankDouble() {
         QVERIFY(finitediffPrecisionLossRank<double>() > 13);
