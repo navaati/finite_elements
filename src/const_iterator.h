@@ -1,18 +1,13 @@
 #ifndef CONST_ITERATOR_H
 #define CONST_ITERATOR_H
 
-#include<type_traits>
+#include<iterator>
 
-template<typename E> class ConstIterator {
+template<typename E> class ConstIterator : public std::iterator<std::input_iterator_tag, E> {
 private:
     const E m_val;
-public:
-    typedef std::input_iterator_tag iterator_category;
-    typedef E value_type;
-    typedef void difference_type;
-    typedef void pointer;
-    typedef void reference;
 
+public:
     ConstIterator(E val) : m_val(val) {}
 
     const E operator*() const {

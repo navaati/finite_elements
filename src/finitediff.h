@@ -2,23 +2,17 @@
 #define FINITEDIFF_H
 
 #include<iterator>
-#include<type_traits>
 
 #include "thomas_algo.h"
 #include "const_iterator.h"
 
-template<class It> class FiniteDiffIterator {
+template<class It> class FiniteDiffIterator : public std::iterator<std::input_iterator_tag, typename std::iterator_traits<It>::value_type> {
 private:
     typedef typename std::iterator_traits<It>::value_type E;
     It m_it;
     const E m_h2;
-public:
-    typedef std::input_iterator_tag iterator_category;
-    typedef E value_type;
-    typedef void difference_type;
-    typedef void pointer;
-    typedef void reference;
 
+public:
     FiniteDiffIterator(It it, E h2) : m_it(it), m_h2(h2) {}
 
     E operator*() {
