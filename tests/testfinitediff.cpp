@@ -4,7 +4,6 @@
 #include<cmath>
 #include <QtTest/QtTest>
 
-#include "const_iterator.h"
 #include "thomas_algo.h"
 #include "finitediff.h"
 
@@ -13,17 +12,11 @@ using namespace std;
 template<typename d> d finitediff_error(const int n) {
     const d h = 1/((d)n+1);
 
-    const ConstIterator<d> c(1);
-
-    vector<d> f(n);
-    int i = 1;
-    generate(f.begin(), f.end(), [&]{ return (i++)*h; });
-
     vector<d> out(n);
 
-    resolve_finite_diff(n, c, f.begin(), out.rbegin());
+    resolve_finite_diff(n, [](d){ return (d)1; }, [](d x){ return x; }, out.rbegin());
 
-    i = 1;
+    int i = 1;
     d error = 0;
     for(d uh : out) {
         constexpr d e = exp(1);
@@ -113,11 +106,3 @@ private slots:
 };
 QTEST_MAIN(TestFiniteDiff)
 #include "testfinitediff.moc"
-
-void showSimpleFiniteDiff() {
-    int n = 4;
-    double c[] = {3, 5, 1, 8};
-    double f[] = {1, 9, 6, 2};
-    auto out = ostream_iterator<double>(cout, " ");
-    resolve_finite_diff(n, c, f, out);
-}
