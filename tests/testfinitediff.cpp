@@ -33,7 +33,9 @@ template double finitediff_error<double>(const int n);
 template float finitediff_error<float>(const int n);
 
 
-template<typename d> unsigned finitediffPrecisionLossRank() {
+template<class error_func> unsigned precisionLossRank(error_func f) {
+    typedef decltype(f(1)) d;
+
     d old_error;
     d error = 1;
     unsigned n = 0;
@@ -41,17 +43,15 @@ template<typename d> unsigned finitediffPrecisionLossRank() {
     do {
         n++;
         old_error = error;
-        error = finitediff_error<d>((int)pow(2,n));
+        error = f((int)pow(2,n));
     } while(error < old_error);
 
     cout << "Max error for n = 2^" << n-1 << " : " << old_error << endl;
     cout << "Max error for n = 2^" << n << " : " << error << endl;
-    cout << "Error not diminishing with h anymore" << endl;
+    cout << "Error not diminishing with step anymore" << endl;
 
     return n;
 }
-template unsigned finitediffPrecisionLossRank<float>();
-template unsigned finitediffPrecisionLossRank<double>();
 
 class TestFiniteDiff: public QObject
 {
@@ -98,10 +98,10 @@ private slots:
     }
 
     void maxRankFloat() {
-        QVERIFY(finitediffPrecisionLossRank<float>() > 6);
+        QVERIFY(precisionLossRank(finitediff_error<float>) > 6);
     }
     void maxRankDouble() {
-        QVERIFY(finitediffPrecisionLossRank<double>() > 13);
+        QVERIFY(precisionLossRank(finitediff_error<double>) > 13);
     }
 };
 QTEST_MAIN(TestFiniteDiff)
