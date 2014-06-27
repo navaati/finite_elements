@@ -5,6 +5,7 @@
 #include <QtTest/QtTest>
 
 #include "thomas_algo.h"
+#include "integrator.h"
 #include "finitediff.h"
 
 using namespace std;
@@ -63,6 +64,15 @@ private:
     }
 
 private slots:
+    void maxIntegratorError() {
+        auto error_func = [](int n){
+            double s = integrate([](double x){ return x*x; }, 0.0, 1.0, n);
+            return abs(1.0/3.0 - s);
+        };
+
+        QVERIFY(precisionLossRank(error_func) > 6);
+    }
+
     void maxThomasAlgoError() {
         constexpr int n = 4;
         const double lower[n-1] = {4, 8, 12};
